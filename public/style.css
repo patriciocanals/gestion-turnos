@@ -229,3 +229,32 @@ table.rot th { color: var(--muted); font-weight: 600; font-size: 12px; }
   .topbar, .palette, .alert, .foot { display: none; }
   body { background: #fff; }
 }
+
+/* ===== Aprovechar toda la pantalla ===== */
+:root { --cellh: clamp(30px, calc((100vh - 410px) / 11), 64px); }
+.view { padding-bottom: 8px; }
+.grid { width: 100%; table-layout: fixed; }
+.grid th, .grid td { width: auto; min-width: 26px; height: calc(var(--cellh) + 2px); }
+.grid thead th { height: 48px; }
+.grid .name { width: 150px; min-width: 150px; max-width: 150px; }
+.grid tbody tr.group td { height: 28px; }
+.cell, .cov { height: calc(var(--cellh) + 1px); font-size: clamp(12px, 1.5vh, 15px); }
+.cell.sm { font-size: clamp(10px, 1.2vh, 13px); }
+.cov { font-size: clamp(10px, 1.3vh, 13px); }
+.grid-wrap { overflow-x: auto; }
+/* Calendario: las filas se reparten el alto disponible */
+.cal { min-height: calc(100vh - 290px); grid-auto-rows: 28px; }
+.cal .dh { align-self: center; }
+.cal > .day { grid-row: auto; }
+.cal { grid-template-rows: 28px repeat(6, minmax(84px, 1fr)); }
+.day .line { font-size: clamp(12px, 1.5vh, 15px); padding: 2px 6px; }
+/* Semana: los carriles se reparten el alto */
+.week { min-height: calc(100vh - 300px); grid-template-rows: auto repeat(5, minmax(60px, 1fr)); }
+.week .chip { font-size: clamp(13px, 1.6vh, 16px); }
+/* Año: más columnas en pantallas anchas y días más grandes */
+@media (min-width: 1100px) { .months { grid-template-columns: repeat(4, 1fr); } }
+.mini .md { padding: clamp(3px, 0.9vh, 9px) 0; font-size: clamp(11px, 1.4vh, 14px); }
+@media (max-width: 760px) {
+  .cal { min-height: 0; grid-template-rows: none; grid-auto-rows: minmax(76px, auto); }
+  .week { min-height: 0; }
+}
