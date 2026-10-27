@@ -129,18 +129,18 @@ async function putCells(req, { user, users }) {
     if (ch.c !== null && !ROLE_CODES[target.role].has(ch.c)) {
       return fail(400, `El código ${ch.c} no es válido para ${target.name}`);
     }
-    const key = `${ch.d.slice(0, 4)}/${target.id}`;
+    const key = `${ch.d.slice(0, 4)}-${target.id}`;
     if (!byKey.has(key)) byKey.set(key, []);
     byKey.get(key).push(ch);
   }
   await Promise.all(
     [...byKey].map(async ([key, list]) => {
-      const doc = (await readJSON(`sched/${key}`)) || {};
+      const doc = (await readJSON(`sched-${key}`)) || {};
       for (const ch of list) {
         if (ch.c === null) delete doc[ch.d];
         else doc[ch.d] = ch.c;
       }
-      await writeJSON(`sched/${key}`, doc);
+      await writeJSON(`sched-${key}`, doc);
     })
   );
   const meta = { by: user.name, at: Date.now() };
@@ -223,7 +223,7 @@ export async function handle(req) {
     return fail(404, "No encontrado");
   } catch (err) {
     console.error(err);
-    return fail(500, "Error del servidor");
+    return fail(500, "Error del servidor: " + err.message);
   }
 }
 
