@@ -23,7 +23,7 @@ const ALLOWED = {
   boss: new Set(["L", "V", "A", "X"]),
 };
 const ROLE_LABEL = { office: "Oficina 9–18", rotating: "Turno rotativo", boss: "Jefatura" };
-const ROLE_GROUP = { office: "Oficina · 9–18", rotating: "Turnos rotativos", boss: "Jefatura" };
+const ROLE_GROUP = { office: "Oficina · 9–18", rotating: "Turnos rotativos", boss: "Jefa" };
 const ROLE_ORDER = ["office", "rotating", "boss"];
 const WD = ["L", "M", "X", "J", "V", "S", "D"];
 
