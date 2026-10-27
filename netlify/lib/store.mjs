@@ -12,14 +12,11 @@ const memStore = {
   },
 };
 
-let blobStore;
 async function store() {
   if (process.env.TURNOS_MEMORY === "1") return memStore;
-  if (!blobStore) {
-    const { getStore } = await import("@netlify/blobs"); // solo se carga en Netlify
-    blobStore = getStore({ name: "turnos", consistency: "strong" });
-  }
-  return blobStore;
+  const { getStore } = await import("@netlify/blobs"); // solo se carga en Netlify
+  // Sin caché: el token de Blobs caduca, hay que crear el acceso en cada petición.
+  return getStore({ name: "turnos", consistency: "strong" });
 }
 
 export const readJSON = async (key) => ((await store()).get(key, { type: "json" })).then((v) => v ?? null);
