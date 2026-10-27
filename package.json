@@ -1,0 +1,15 @@
+{
+  "name": "gestor-turnos",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Gestor de turnos anual para el equipo (Netlify + Netlify Blobs)",
+  "scripts": {
+    "dev": "netlify dev",
+    "dev:local": "node scripts/dev-server.mjs",
+    "test": "node scripts/test-api.mjs"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gestor de turnos</title>
+  <meta name="theme-color" content="#1f4fd8">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4fd8'/%3E%3Cpath d='M8 12h16M8 17h16M8 22h10' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Login -->
+  <main id="login" class="login" hidden>
+    <form id="login-form" class="login-card" autocomplete="on">
+      <h1>Gestor de turnos</h1>
+      <p class="muted">Entra con tu usuario para ver y editar el calendario del equipo.</p>
+      <label>Usuario<input name="username" autocomplete="username" autocapitalize="none" required></label>
+      <label>Contraseña<input name="password" type="password" autocomplete="current-password" required></label>
+      <p class="error" id="login-error" role="alert"></p>
+      <button class="btn primary" type="submit">Entrar</button>
+    </form>
+  </main>
+
+  <!-- App -->
+  <div id="app" hidden>
+    <header class="topbar">
+      <div class="brand">Turnos</div>
+      <nav class="tabs" id="tabs" aria-label="Vista">
+        <button data-view="grid">Cuadrante</button>
+        <button data-view="calendar">Calendario</button>
+        <button data-view="week">Semana</button>
+        <button data-view="year">Año</button>
+      </nav>
+      <div class="period">
+        <button class="icon-btn" id="prev" aria-label="Anterior">‹</button>
+        <strong id="period-label" aria-live="polite"></strong>
+        <button class="icon-btn" id="next" aria-label="Siguiente">›</button>
+        <button class="btn small" id="today">Hoy</button>
+      </div>
+      <div class="spacer"></div>
+      <span class="sync" id="sync" role="status"></span>
+      <button class="btn small" id="undo" title="Deshacer (Ctrl+Z)">↶ Deshacer</button>
+      <button class="btn small" id="fill-year">Rellenar año</button>
+      <button class="btn small" id="absence-btn">+ Ausencia</button>
+      <div class="menu-wrap">
+        <button class="btn small ghost" id="user-btn" aria-haspopup="true"></button>
+        <div class="menu" id="user-menu" hidden>
+          <button id="m-pass">Cambiar contraseña</button>
+          <button id="m-team" hidden>Gestionar equipo</button>
+          <button id="m-logout">Cerrar sesión</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="palette" id="palette" aria-label="Fichas de turno"></section>
+    <div class="alert" id="alert" hidden></div>
+    <main id="view" class="view"></main>
+    <footer class="foot" id="foot"></footer>
+  </div>
+
+  <div id="popover" class="popover" hidden></div>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <div id="dialogs"></div>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>
