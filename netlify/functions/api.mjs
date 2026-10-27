@@ -111,7 +111,7 @@ async function getState(url, { users }) {
   const data = {};
   await Promise.all(
     users.map(async (u) => {
-      data[u.id] = (await readJSON(`sched/${year}/${u.id}`)) || {};
+      data[u.id] = (await readJSON(`sched-${year}-${u.id}`)) || {};
     })
   );
   return json({ year, users: users.map(publicUser), data, meta: (await readJSON("meta")) || null });
