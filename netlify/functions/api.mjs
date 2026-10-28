@@ -1,6 +1,6 @@
 // API única del Gestor de turnos. Ruta: /api/*
 import { randomBytes } from "node:crypto";
-import { readJSON, writeJSON } from "../lib/store.mjs";
+import { readJSON, writeJSON, removeKey, listKeys } from "../lib/store.mjs";
 import {
   hashPassword,
   checkPassword,
@@ -198,6 +198,22 @@ async function adminDelete(id, { user, users }) {
   return json({ ok: true });
 }
 
+// Restablecer de fábrica: borra todos los turnos y usuarios. Los usuarios se recrean solos
+// (con INITIAL_PASSWORD) en la siguiente petición. Exige contraseña de la persona administradora.
+async function factoryReset(req, { user }) {
+  const { password, confirm } = await body(req);
+  if (confirm !== "RESTABLECER") return fail(400, "Escribe RESTABLECER para confirmar");
+  if (typeof password !== "string" || !(await checkPassword(password, user))) {
+    await sleep(800);
+    return fail(403, "La contraseña no es correcta");
+  }
+  const keys = [...(await listKeys("sched-")), ...(await listKeys("sched/"))];
+  for (const k of keys) await removeKey(k);
+  await removeKey("meta");
+  await removeKey("users"); // al final: si algo falla antes, la sesión sigue siendo válida
+  return json({ ok: true, deleted: keys.length });
+}
+
 // ---------- router ----------
 export async function handle(req) {
   const url = new URL(req.url);
@@ -217,6 +233,7 @@ export async function handle(req) {
     if (route.startsWith("admin/")) {
       if (!auth.user.admin) return fail(403, "Solo la administración puede hacer esto");
       if (route === "admin/users" && m === "POST") return await adminSaveUser(req, auth);
+      if (route === "admin/factory-reset" && m === "POST") return await factoryReset(req, auth);
       if (route === "admin/reset" && m === "POST") return await adminReset(req, auth);
       if (route.startsWith("admin/users/") && m === "DELETE") return await adminDelete(route.split("/")[2], auth);
     }

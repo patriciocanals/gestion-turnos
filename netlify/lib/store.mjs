@@ -10,6 +10,9 @@ const memStore = {
   async delete(key) {
     mem.delete(key);
   },
+  async list({ prefix = "" } = {}) {
+    return { blobs: [...mem.keys()].filter((k) => k.startsWith(prefix)).map((key) => ({ key })) };
+  },
 };
 
 async function store() {
@@ -22,3 +25,4 @@ async function store() {
 export const readJSON = async (key) => ((await store()).get(key, { type: "json" })).then((v) => v ?? null);
 export const writeJSON = async (key, value) => (await store()).setJSON(key, value);
 export const removeKey = async (key) => (await store()).delete(key);
+export const listKeys = async (prefix) => ((await (await store()).list({ prefix })).blobs || []).map((b) => b.key);

@@ -79,4 +79,21 @@ assert.equal((await call("DELETE", "/api/admin/users/" + newU.data.user.id, { to
 assert.equal((await call("POST", "/api/login", { body: { username: "marta", password: rs.data.tempPassword } })).status, 401);
 assert.equal((await call("DELETE", "/api/admin/users/" + boss.id, { token: tj })).status, 400);
 
+// restablecer de fábrica
+const plain = await call("POST", "/api/login", { body: { username: "oficina1", password: "turnos2026" } });
+assert.equal((await call("POST", "/api/admin/factory-reset", { token: plain.data.token, body: { password: "turnos2026", confirm: "RESTABLECER" } })).status, 403); // no admin
+assert.equal((await call("POST", "/api/admin/factory-reset", { token: tj, body: { password: "nueva123", confirm: "si" } })).status, 400);
+assert.equal((await call("POST", "/api/admin/factory-reset", { token: tj, body: { password: "mala", confirm: "RESTABLECER" } })).status, 403);
+st = await call("GET", "/api/state?year=2026", { token: tj });
+assert.ok(Object.values(st.data.data).some((d) => Object.keys(d).length)); // aún hay datos
+const rr = await call("POST", "/api/admin/factory-reset", { token: tj, body: { password: "nueva123", confirm: "RESTABLECER" } });
+assert.equal(rr.status, 200);
+assert.equal((await call("GET", "/api/me", { token: tj })).status, 401); // sesión anterior invalidada
+const fresh = await call("POST", "/api/login", { body: { username: "jefa", password: "turnos2026" } });
+assert.equal(fresh.status, 200);
+assert.equal(fresh.data.mustChange, true);
+st = await call("GET", "/api/state?year=2026", { token: fresh.data.token });
+assert.equal(st.data.users.length, 8);
+assert.ok(Object.values(st.data.data).every((d) => Object.keys(d).length === 0)); // calendario vacío
+
 console.log("✔ API: todas las pruebas correctas");

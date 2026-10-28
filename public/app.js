@@ -23,7 +23,7 @@ const ALLOWED = {
   boss: new Set(["L", "V", "A", "X"]),
 };
 const ROLE_LABEL = { office: "Oficina 9–18", rotating: "Turno rotativo", boss: "Jefatura" };
-const ROLE_GROUP = { office: "Oficina · 9–18", rotating: "Turnos rotativos", boss: "Jefa" };
+const ROLE_GROUP = { office: "Oficina · 9–18", rotating: "Turnos rotativos", boss: "Jefatura" };
 const ROLE_ORDER = ["office", "rotating", "boss"];
 const WD = ["L", "M", "X", "J", "V", "S", "D"];
 
@@ -263,6 +263,7 @@ function renderHeader() {
     : L(c, { month: "long", year: "numeric" }));
   $("#user-btn").textContent = state.me ? state.me.name + " ▾" : "";
   $("#m-team").hidden = !state.me?.admin;
+  $("#m-reset").hidden = !state.me?.admin;
   $("#undo").disabled = !state.undo.length;
   setSync();
 }
@@ -732,6 +733,30 @@ async function openTeam() {
   paint();
 }
 
+// -- restablecer de fábrica (solo administración, con contraseña)
+function openFactoryReset() {
+  const dlg = openDialog(`<form method="dialog" id="reset-form"><h2 style="color:var(--danger)">Restablecer la app de fábrica</h2>
+    <div class="preview bad"><b>Esta acción no se puede deshacer.</b><br>Se borrarán <b>todos los turnos de todos los años</b>, todas las vacaciones y <b>todas las cuentas</b> (nombres, usuarios y contraseñas).<br>La app volverá a empezar con las 8 cuentas genéricas (<code>jefa</code>, <code>oficina1</code>, <code>oficina2</code>, <code>turno1</code>…<code>turno5</code>) y la contraseña inicial, y se cerrará la sesión de todo el mundo.</div>
+    <label>Tu contraseña de administración<input type="password" name="password" autocomplete="current-password" required></label>
+    <label>Para confirmar, escribe <b>RESTABLECER</b><input name="confirm" autocomplete="off" autocapitalize="characters" required></label>
+    <p class="error" role="alert"></p>
+    <div class="actions"><button class="btn" type="button" data-close>Cancelar</button><button class="btn danger" type="submit" id="reset-go" disabled>Borrar todo y restablecer</button></div></form>`);
+  const form = $("#reset-form", dlg);
+  const ready = () => ($("#reset-go", dlg).disabled = form.confirm.value !== "RESTABLECER" || !form.password.value);
+  form.addEventListener("input", ready);
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const err = $(".error", dlg);
+    $("#reset-go", dlg).disabled = true;
+    try {
+      await api("admin/factory-reset", { method: "POST", body: { password: form.password.value, confirm: form.confirm.value } });
+      dlg.close();
+      logout();
+      $("#login-error").textContent = "App restablecida. Entra con jefa y la contraseña inicial.";
+    } catch (ex) { err.textContent = ex.message; ready(); }
+  });
+}
+
 // ---------- eventos ----------
 function bind() {
   $("#tabs").addEventListener("click", async (e) => {
@@ -761,6 +786,7 @@ function bind() {
   $("#user-btn").onclick = (e) => { e.stopPropagation(); $("#user-menu").hidden = !$("#user-menu").hidden; };
   $("#m-pass").onclick = () => { $("#user-menu").hidden = true; openPassword(); };
   $("#m-team").onclick = () => { $("#user-menu").hidden = true; openTeam(); };
+  $("#m-reset").onclick = () => { $("#user-menu").hidden = true; openFactoryReset(); };
   $("#m-logout").onclick = () => logout();
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".menu-wrap")) $("#user-menu").hidden = true;

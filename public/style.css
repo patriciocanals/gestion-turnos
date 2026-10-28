@@ -258,3 +258,6 @@ table.rot th { color: var(--muted); font-weight: 600; font-size: 12px; }
   .cal { min-height: 0; grid-template-rows: none; grid-auto-rows: minmax(76px, auto); }
   .week { min-height: 0; }
 }
+
+.menu .danger-item { color: var(--danger); border-top: 1px solid var(--line); margin-top: 4px; border-radius: 0 0 7px 7px; }
+.btn.danger:not(:disabled) { background: var(--danger); color: #fff; border-color: var(--danger); }
