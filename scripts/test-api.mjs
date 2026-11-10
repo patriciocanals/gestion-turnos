@@ -1,4 +1,3 @@
-// Pruebas de la API con almacenamiento en memoria. Uso: npm test
 import assert from "node:assert/strict";
 process.env.TURNOS_MEMORY = "1";
 const { handle } = await import("../netlify/functions/api.mjs");
