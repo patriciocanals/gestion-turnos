@@ -32,7 +32,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function loadUsers() {
   let users = await readJSON("users");
   if (users) return users;
-  // Primera ejecución: se crea el equipo base. La jefa (admin) lo renombra desde la app.
+  // Primera ejecución: se crea el equipo base. El jefe (admin) lo renombra desde la app.
   const initial = process.env.INITIAL_PASSWORD || "turnos2026";
   const seed = [
     ["jefa", "Jefa", "boss", true],
