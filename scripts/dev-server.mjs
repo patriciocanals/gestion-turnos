@@ -1,5 +1,3 @@
-// Servidor local sin dependencias de Netlify (datos en memoria). Uso: npm run dev:local
-// Para probar con almacenamiento real usa `netlify dev`.
 import http from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
