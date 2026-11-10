@@ -27,7 +27,7 @@ const ROLE_GROUP = { office: "Oficina · 9–18", rotating: "Turnos rotativos", 
 const ROLE_ORDER = ["office", "rotating", "boss"];
 const WD = ["L", "M", "X", "J", "V", "S", "D"];
 
-// ---------- fechas (YYYY-MM-DD, aritmética en UTC para evitar problemas de horario de verano) ----------
+// ---------- fechas (YYYY-MM-DD, aritmética en UTC) ----------
 const pad = (n) => String(n).padStart(2, "0");
 const ymd = (y, m, d) => `${y}-${pad(m + 1)}-${pad(d)}`;
 const parse = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(Date.UTC(y, m - 1, d)); };
